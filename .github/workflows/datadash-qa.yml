@@ -1,0 +1,44 @@
+name: DataDash QA Automation
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch: # Allows manual trigger
+
+jobs:
+  qa-automation:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        
+    - name: Install dependencies
+      run: |
+        npm init -y
+        npm install playwright
+        
+    - name: Install Playwright browsers
+      run: npx playwright install chromium
+      
+    - name: QA Automation by 23f3002216@ds.study.iitm.ac.in
+      run: |
+        echo "Starting DataDash QA automation process..."
+        node scraper.js
+        echo "QA automation completed successfully"
+        
+    - name: Archive results
+      uses: actions/upload-artifact@v4
+      with:
+        name: qa-results
+        path: |
+          *.log
+          *.json
+      if: always()
